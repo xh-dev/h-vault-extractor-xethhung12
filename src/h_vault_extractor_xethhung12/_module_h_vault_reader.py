@@ -41,10 +41,14 @@ def GetSecrets(vault_addr: str, role_id: str, secret_id: str, mount_point: str, 
 
 def LoadSecretsIntoEnv(
     vault_addr: str, role_id: str, secret_id: str, 
-    mount_point: str, secret_path: str, keys_to_extract: List[str]
-) -> Tuple[str, ...]:
+    mount_point: str, secret_path: str, keys_to_extract: List[dict]
+):
     d = GetSecrets(validation, role_id, secret_id, mount_point, secret_path, keys_to_extract)
     for key in keys_to_extract:
-        if key in d:
-            os.environ[key] = d[key]
-    
+        if key['VAULT_VALUE'] in d:
+            print(f"Set env: {key['ENV_NAME']}")
+            os.environ[key['ENV_NAME']] = d[key['VAULT_VALUE']]
+
+
+def Pair(env_name:str, vault_vault: str):
+    return {'VAULT_VALUE':vault_vault, "ENV_NAME": env_name}
